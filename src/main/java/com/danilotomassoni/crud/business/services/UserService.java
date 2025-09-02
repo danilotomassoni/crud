@@ -3,6 +3,7 @@ package com.danilotomassoni.crud.business.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.danilotomassoni.crud.exceptions.UserNotFoundException;
 import com.danilotomassoni.crud.infra.entities.User;
 import com.danilotomassoni.crud.infra.repositories.UserRepository;
 
@@ -19,7 +20,7 @@ public class UserService {
     }
 
     public User findByEmail(String email) {
-        return repository.findByEmail(email).orElseThrow(() -> new RuntimeException("Email não cadastrado!"));
+        return repository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
     }
 
     @Transactional
@@ -28,7 +29,7 @@ public class UserService {
     }
 
     public User update(Integer id, User user) {
-        User userEntity = repository.findById(id).orElseThrow(() -> new RuntimeException("Usuario não cadastrado!"));
+        User userEntity = repository.findById(id).orElseThrow(() -> new UserNotFoundException(user.getEmail()));
 
         User userUpdate = User.builder()
                 .email(user.getEmail() != null ? user.getEmail() : userEntity.getEmail())
